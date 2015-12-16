@@ -3,9 +3,9 @@
 set -e
 
 KERNEL_VERSION_ARCH=$(uname -r)
-KERNEL_VERSION=$(uname -r | cut -d '.' -f 1-4)
+KERNEL_VERSION=$(uname -r | cut -d '.' -f 1-6)
 KERNEL_SHORT_VERSION=$(uname -r | cut -d '.' -f 1-2)
-KERNEL_DIST_VERSION=$(uname -r | cut -d '.' -f 4)
+KERNEL_DIST_VERSION=$(uname -r | cut -d '.' -f 6)
 KERNEL_ARCH=$(uname -m)
 EXTRAVERSION="-$(uname -r | cut -d '-' -f 2)"
 KERNEL_RPM_NAME="kernel-$KERNEL_VERSION.src.rpm"
@@ -41,7 +41,9 @@ cd ~/rpmbuild/SPECS
 rpmbuild -bp --target=$KERNEL_ARCH kernel.spec
 
 
-cd ~/rpmbuild/BUILD/kernel-$KERNEL_SHORT_VERSION.$KERNEL_DIST_VERSION/linux-$KERNEL_VERSION_ARCH
+cd ~/rpmbuild/BUILD/kernel-$KERNEL_VERSION/linux-$KERNEL_VERSION_ARCH
+
+cp /usr/src/kernels/$KERNEL_VERSION_ARCH/Module.symvers .
 
 pwd
 
@@ -60,6 +62,7 @@ echo "CONFIG_CAN_VCAN=m" >> .config
 echo "CONFIG_CAN_DEV=m" >> .config
 echo "CONFIG_CAN_CALC_BITTIMING=y" >> .config
 echo "CONFIG_CAN_PEAK_USB=m" >> .config
+echo "CONFIG_CAN_ESD_USB2=m" >> .config
 
 echo "# CONFIG_NET_EMATCH_CANID is not set" >> .config
 echo "# CONFIG_CAN_SLCAN is not set" >> .config
@@ -69,12 +72,12 @@ echo "# CONFIG_CAN_C_CAN is not set" >> .config
 echo "# CONFIG_CAN_M_CAN is not set" >> .config
 echo "# CONFIG_CAN_CC770 is not set" >> .config
 echo "# CONFIG_CAN_EMS_USB is not set" >> .config
-echo "# CONFIG_CAN_ESD_USB2 is not set" >> .config
 echo "# CONFIG_CAN_GS_USB is not set" >> .config
 echo "# CONFIG_CAN_KVASER_USB is not set" >> .config
 echo "# CONFIG_CAN_8DEV_USB is not set" >> .config
 echo "# CONFIG_CAN_SOFTING is not set" >> .config
 echo "# CONFIG_CAN_DEBUG_DEVICES is not set" >> .config
+echo "# CONFIG_PCH_CAN is not set" >> .config
 
 make modules_prepare
 
